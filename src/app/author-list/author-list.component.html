@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>作者姓名</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let author of Authors | slice: (page-1) * PageSize : page * PageSize ; let i = index">
+        <td>{{((page-1)*PageSize)+1+i}}</td>
+        <td>
+          <input type="text" disabled="" [(ngModel)]="author.Name" id="authorname{{author.Id}}" />
+          <input type="submit" disabled="" value="儲存" id="save{{author.Id}}" (click)="onSave(author)" />
+        </td>
+        <td>
+          <span class="btn btn-primary mr-3" (click)="onOnesArticles(author.Id)">文章</span>
+          <span class="btn btn-primary mr-3" id="editAuthorname" (click)="onEditAuthorname(author)">編輯作者姓名</span>
+          <span *ngIf="!(UserId === author.Id)" class="btn btn-danger" (click)="onDelete(author.Id);">刪除</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination class="row justify-content-center" [rotate]="true" [boundaryLinks]="true" [(page)]="page"
+    [pageSize]="PageSize" [maxSize]="MaxSize" [collectionSize]="Authors.length" *ngIf="Authors"
+    (pageChange)="onSetPage($event)">
+  </ngb-pagination>
+</div>

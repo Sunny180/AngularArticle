@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row align-items-center">
+    <button class="btn btn-primary">登入</button>
+    <div class="col-7">
+      <h1 class="mt-4">文章平台</h1>
+    </div>
+    <div class="col-4 d-flex justify-content-end">
+      <h6 *ngIf="(IsLoggedIn | async)" class="mt-2">Hello <b>{{UserName | async}}</b></h6>
+      <button *ngIf="(IsLoggedIn | async) === false  && router.url!=='/login'" class="btn btn-primary"
+        routerLink="/login">登入</button>
+      <button *ngIf="(IsLoggedIn | async)" class="btn btn-primary ml-3" (click)="onLogout()">登出</button>
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <button class="btn btn-primary">登入</button>
+    <div class="col-7 align-self-start">
+      <h1 class="mt-4">文章平台</h1>
+    </div>
+    <div class="col-4 d-flex justify-content-end align-items-center align-self-end">
+      <h6 *ngIf="(IsLoggedIn | async)" class="mt-2">Hello <b>{{UserName | async}}</b></h6>
+      <button *ngIf="(IsLoggedIn | async) === false  && router.url!=='/login'" class="btn btn-primary align-self-end"
+        routerLink="/login">登入</button>
+      <button *ngIf="(IsLoggedIn | async)" class="btn btn-primary ml-3 align-self-end" (click)="onLogout()">登出</button>
+    </div>
+  </div>
+  <div class="row align-items-center" style="min-height: 200px;">
+    <div class="col d-flex justify-content-center">
+      <button class="btn btn-primary">登入</button>
+    </div>
+  </div>
+
+  <div *ngIf="router.url!=='/login'">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" (activeIdChange)="onSetActiveId()" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <a class=" text-black" ngbNavLink routerLink="/articles">文章列表</a>
+      </li>
+      <li [ngbNavItem]="2" *ngIf="(IsLoggedIn | async)">
+        <a class=" text-black" ngbNavLink routerLink="/myarticles" (click)="onSetAuthorId()">我的文章</a>
+      </li>
+      <li [ngbNavItem]="3" *ngIf="(IsLoggedIn | async) && ((RoleId | async) === 1)">
+        <a class=" text-black" ngbNavLink routerLink="/authorlist">作者列表</a>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</div>

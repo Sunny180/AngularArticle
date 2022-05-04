@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="row d-flex justify-content-center">
+    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-5">
+      <div class="mt-3 mb-3">
+        <label for="name" class="form-label">帳號</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter Username" [(ngModel)]="loginUser.Account"
+          required>
+      </div>
+      <div class="mt-3 mb-3">
+        <label for="psw" class="form-label">密碼</label>
+        <input type="password" class="form-control" id="psw" placeholder="Enter Password"
+          [(ngModel)]="loginUser.Password" required>
+      </div>
+      <br>
+      <div class="row d-flex align-items-center">
+        <div class="col-6 d-flex justify-content-center">
+          <button class="btn btn-secondary" width="20%" routerLink="/articles">回首頁</button>
+        </div>
+        <div class="col-6 d-flex justify-content-center">
+          <button class="btn btn-primary" (click)="onLogin();">登入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

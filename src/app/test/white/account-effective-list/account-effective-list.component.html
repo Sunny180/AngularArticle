@@ -1,0 +1,145 @@
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+  <li [ngbNavItem]="1">
+    <a ngbNavLink>簽署紀錄</a>
+    <ng-template ngbNavContent>
+      <form [formGroup]="effectiveForm">
+        <div class="form-row">
+          <div class="col-12 col-md-6 col-lg-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="statementTypes">類別</label>
+              </div>
+              <select class="form-control" id="statementTypes" formControlName="_statementType"
+                (change)="getStatementVersion(statementType)">
+                <option value="">--全選--</option>
+                <option *ngFor="let statementType of statementTypes" value="{{statementType.Id}}">
+                  {{statementType.Name_CH}}({{statementType.Name_EN}})</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="statementTypes">版號</label>
+              </div>
+              <select class="form-control" id="statementTypes" formControlName="_statementVersion"
+                [attr.disabled]="statementType === '' ? true : null">
+                <option value="">--請選擇--</option>
+                <option *ngFor="let statementVersion of statementVersions" value="{{statementVersion.Id}}">
+                  {{statementVersion.Version}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">帳號</span>
+              </div>
+              <input type="text" class="form-control" placeholder="請輸入帳號" formControlName="_account">
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">開始日期</span>
+              </div>
+              <input type="text" class="form-control" placeholder="yyyy-mm-dd" formControlName="_startDate"
+                ngbDatepicker #d="ngbDatepicker" [maxDate]="endDate">
+              <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"><i
+                  class="bi bi-calendar3"></i></button>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">結束日期</span>
+              </div>
+              <input type="text" class="form-control" placeholder="yyyy-mm-dd" formControlName="_endDate" ngbDatepicker
+                #dp="ngbDatepicker" [minDate]="startDate">
+              <button class="btn btn-outline-secondary calendar" (click)="dp.toggle()" type="button"><i
+                  class="bi bi-calendar3"></i></button>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <button class="btn btn-success mr-2" (click)="onClickSearchBtn()" type="button" [attr.disabled]="(statementType === '')||(statementVersion === '') ? true : null">查詢</button>
+            <button class="btn btn-secondary" (click)="onClickCleanBtn()" type="button"><i
+                class="bi bi-trash"></i></button>
+          </div>
+        </div>
+      </form>
+
+      <div *ngIf="(noData === false) && (signatures.length !==0)" class="container mt-5" >
+        <div class="row">
+          <div class="col d-flex justify-content-between">
+            <p>最後查詢時間: {{now | date:'yyyy-MM-dd HH:mm:ss':'UTC +8'}}</p>
+            <p>資料數: {{allIdListQty}}</p>
+            <p>帳號數: {{accountQty}}</p>
+            <button class="btn btn-success mb-2" (click)="onClickExportExcelBtn()">匯出報表</button>
+          </div>
+        </div>
+
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col" *ngIf="order.Sort !== 'Account'" (click)="onClickSortBtn('Account',0)">帳號</th>
+              <th scope="col" *ngIf="(order.Sort === 'Account') && (order.Direction === 0)"
+                (click)="onClickSortBtn('Account',1)">帳號<i class="bi bi-caret-up-fill"></i></th>
+              <th scope="col" *ngIf="(order.Sort === 'Account') && (order.Direction === 1)"
+                (click)="onClickSortBtn('Account',0)">帳號<i class="bi bi-caret-down-fill"></i></th>
+
+              <th scope="col" *ngIf="order.Sort !== 'StatementType_Id'" (click)="onClickSortBtn('StatementType_Id',0)">
+                類別</th>
+              <th scope="col" *ngIf="(order.Sort === 'StatementType_Id') && (order.Direction === 0)"
+                (click)="onClickSortBtn('StatementType_Id',1)">類別<i class="bi bi-caret-up-fill"></i></th>
+              <th scope="col" *ngIf="(order.Sort === 'StatementType_Id') && (order.Direction === 1)"
+                (click)="onClickSortBtn('StatementType_Id',0)">類別<i class="bi bi-caret-down-fill"></i></th>
+
+              <th scope="col">版號</th>
+              <th scope="col">開始時間</th>
+
+              <th scope="col" *ngIf="order.Sort !== 'SignDate'" (click)="onClickSortBtn('SignDate',0)">簽核時間</th>
+              <th scope="col" *ngIf="(order.Sort === 'SignDate') && (order.Direction === 0)"
+                (click)="onClickSortBtn('SignDate',1)">簽核時間<i class="bi bi-caret-up-fill"></i></th>
+              <th scope="col" *ngIf="(order.Sort === 'SignDate') && (order.Direction === 1)"
+                (click)="onClickSortBtn('SignDate',0)">簽核時間<i class="bi bi-caret-down-fill"></i></th>
+
+              <th scope="col">操作</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let signature of signatures">
+            <tr>
+              <th scope="row">{{signature.Account}}</th>
+              <td>
+                {{findStatementName(signature.StatementType_Id,0)}}({{findStatementName(signature.StatementType_Id,1)}})
+              </td>
+              <td>{{signature.Version}}</td>
+              <td>{{signature.StartTime}}</td>
+              <td>{{signature.SignDate}}</td>
+              <td><button class="btn btn-success"
+                  routerLink="/main/signatureInfo/viewHistorySignatureDetail/{{signature.Id}}">檢視</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <ngb-pagination class="d-flex justify-content-center" [collectionSize]="allIdListQty" [(page)]="page"
+          [pageSize]="pageSize" [boundaryLinks]="true" (pageChange)="getPage()"></ngb-pagination>
+      </div>
+      <div *ngIf="noData === true" class="container mt-5">
+        <h1>查無資料</h1>
+      </div>
+    </ng-template>
+
+  </li>
+  <li [ngbNavItem]="2">
+    <a ngbNavLink>類別簽屬紀錄</a>
+    <ng-template ngbNavContent>
+      <p>Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko
+        farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts
+        ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar
+        helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson
+        8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester
+        stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
+    </ng-template>
+  </li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>

@@ -1,0 +1,19 @@
+<div class="container position-relative px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      <div class="post-heading mt-3">
+        <h2>文章新增</h2>
+        <div class="mt-3 mb-3">
+          <label for="title" class="form-label">文章標題</label>
+          <input type="text" class="form-control" id="title" placeholder="填入標題" #aTitle>
+        </div>
+        <div class="mb-3">
+          <label for="content" class="form-label">文章內容</label>
+          <textarea class="form-control" id="content" rows="5" placeholder="輸入你想要寫的內容..." #aContent></textarea>
+        </div>
+        <button class="btn btn-secondary" (click)="onGoBack()">回上頁</button>
+        <button class="btn btn-primary float-right" (click)="onAddArticle(aTitle.value, aContent.value)">新增</button>
+      </div>
+    </div>
+  </div>
+</div>
